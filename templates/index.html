@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex flex-col items-center justify-center text-center py-20">
+    <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter leading-tight rgb-animate py-2">
+        IGNITE YOUR<br>DIGITAL IDENTITY
+    </h1>
+    <p class="text-xl text-gray-400 max-w-2xl mb-10 leading-relaxed">
+        The most powerful RGB text customization engine for modern creators. Build, animate, and deploy premium neon aesthetics in seconds.
+    </p>
+    <div class="flex space-x-4">
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-2xl shadow-indigo-500/20 text-lg">
+                Go to Dashboard
+            </a>
+        {% else %}
+            <a href="{{ url_for('register') }}" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-2xl shadow-indigo-500/20 text-lg">
+                Get Started Free
+            </a>
+            <a href="{{ url_for('login') }}" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl transition-all text-lg">
+                Login
+            </a>
+        {% endif %}
+    </div>
+
+    <!-- Live Preview Demo -->
+    <div class="mt-24 w-full max-w-4xl glass-card rounded-3xl p-12 relative overflow-hidden">
+        <div class="absolute -top-24 -left-24 w-64 h-64 bg-indigo-500/10 blur-[120px] rounded-full"></div>
+        <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-500/10 blur-[120px] rounded-full"></div>
+        
+        <p class="text-4xl md:text-6xl font-bold rgb-animate" style="animation-duration: 3s; filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));">
+            ULTRA REALTIME FX
+        </p>
+        <p class="mt-8 text-gray-500 uppercase tracking-widest font-semibold text-xs">Dynamic Neon Engine v1.0</p>
+    </div>
+</div>
+{% endblock %}

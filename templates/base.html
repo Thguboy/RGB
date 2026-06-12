@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Studio - {% if title %}{{ title }}{% else %}Premium Text FX{% endif %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        .rgb-animate {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 3s ease infinite;
+        }
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .nav-link:hover {
+            color: #00f2ff;
+            text-shadow: 0 0 8px rgba(0, 242, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <nav class="fixed w-full z-50 glass-card py-4 px-8 flex justify-between items-center top-0">
+        <a href="{{ url_for('index') }}" class="text-2xl font-extrabold tracking-tighter rgb-animate">RGB STUDIO</a>
+        <div class="space-x-6 text-sm font-semibold tracking-wide flex items-center">
+            <a href="{{ url_for('index') }}" class="nav-link transition-all">HOME</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard') }}" class="nav-link transition-all">DASHBOARD</a>
+                <a href="{{ url_for('logout') }}" class="px-4 py-2 bg-red-600/20 border border-red-500/50 hover:bg-red-600/40 text-red-400 rounded-lg transition-all">LOGOUT</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link transition-all">LOGIN</a>
+                <a href="{{ url_for('register') }}" class="px-4 py-2 bg-indigo-600/80 hover:bg-indigo-600 text-white rounded-lg transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)]">JOIN NOW</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="pt-24 min-h-screen">
+        <div class="container mx-auto px-6 py-12">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-8 p-4 rounded-lg bg-{{ 'green' if category == 'success' else 'red' }}-500/20 border border-{{ 'green' if category == 'success' else 'red' }}-500/50 text-{{ 'green' if category == 'success' else 'red' }}-400">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="border-t border-white/5 py-12 mt-12 text-center text-gray-500 text-sm">
+        <p>&copy; 2026 RGB Studio | Elite Cyber-Design System</p>
+    </footer>
+
+    <script>
+        // Global scripts if needed
+    </script>
+</body>
+</html>

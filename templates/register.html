@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex items-center justify-center min-h-[70vh]">
+    <div class="w-full max-w-md glass-card p-10 rounded-3xl">
+        <div class="mb-10 text-center">
+            <h2 class="text-4xl font-black tracking-tighter rgb-animate inline-block">JOIN STUDIO</h2>
+            <p class="text-gray-500 mt-2 font-medium">Start your RGB design experience</p>
+        </div>
+        <form method="POST" action="" class="space-y-6">
+            {{ form.hidden_tag() }}
+            
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Username</label>
+                {{ form.username(class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-all text-white") }}
+                {% if form.username.errors %}
+                    {% for error in form.username.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Email Address</label>
+                {{ form.email(class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-all text-white") }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Password</label>
+                {{ form.password(class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-all text-white") }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="space-y-2">
+                <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Confirm Password</label>
+                {{ form.confirm_password(class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-all text-white") }}
+                {% if form.confirm_password.errors %}
+                    {% for error in form.confirm_password.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            {{ form.submit(class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-indigo-500/20 cursor-pointer") }}
+        </form>
+        <div class="mt-8 pt-8 border-t border-white/5 text-center">
+            <p class="text-gray-500 text-sm">Already a member? <a href="{{ url_for('login') }}" class="text-indigo-400 hover:text-indigo-300 font-bold">Login Here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

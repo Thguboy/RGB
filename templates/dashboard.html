@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8" style="height: calc(100vh - 8rem);">
+    <!-- Customization Panel: independently scrollable -->
+    <div class="lg:col-span-1 overflow-y-auto" style="scrollbar-width: thin; scrollbar-color: rgba(99,102,241,0.4) transparent;">
+        <div class="glass-card p-8 rounded-3xl">
+            <h2 class="text-2xl font-bold mb-6 flex items-center">
+                <span class="w-2 h-8 bg-indigo-500 rounded-full mr-3"></span>
+                CUSTOMIZE
+            </h2>
+            <form id="styleForm" method="POST" action="" class="space-y-6">
+                {{ form.hidden_tag() }}
+                
+                <div class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Text Content</label>
+                        {{ form.text_content(id="textInput", class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500 transition-all text-white", placeholder="Enter your text...") }}
+                    </div>
+
+                    <!-- Typography Section -->
+                    <div class="pt-4 border-t border-white/5">
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">Typography</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Font Size</label>
+                                    <span id="fontSizeVal" class="text-xs text-indigo-400 font-mono">40px</span>
+                                </div>
+                                <input type="range" id="fontSize" name="font_size" min="20" max="120" value="40" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Font Weight</label>
+                                    <span id="fontWeightVal" class="text-xs text-indigo-400 font-mono">700</span>
+                                </div>
+                                <input type="range" id="fontWeight" name="font_weight" min="100" max="900" step="100" value="700" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Letter Spacing</label>
+                                    <span id="letterSpacingVal" class="text-xs text-indigo-400 font-mono">0px</span>
+                                </div>
+                                <input type="range" id="letterSpacing" name="letter_spacing" min="-5" max="20" value="0" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Effects Section -->
+                    <div class="pt-4 border-t border-white/5">
+                        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 mb-4">Visual Effects</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-gray-500">Color 1</label>
+                                    <input type="color" id="color1" name="color_1" value="#ff0000" class="w-full h-10 bg-transparent border-none cursor-pointer p-0">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-gray-500">Color 2</label>
+                                    <input type="color" id="color2" name="color_2" value="#00ff00" class="w-full h-10 bg-transparent border-none cursor-pointer p-0">
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="text-[10px] font-bold uppercase text-gray-500">Color 3</label>
+                                    <input type="color" id="color3" name="color_3" value="#0000ff" class="w-full h-10 bg-transparent border-none cursor-pointer p-0">
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Glow Intensity</label>
+                                    <span id="glowVal" class="text-xs text-indigo-400 font-mono">10px</span>
+                                </div>
+                                <input type="range" id="glow" name="glow_intensity" min="0" max="50" value="10" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            </div>
+
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Animation Speed</label>
+                                    <span id="speedVal" class="text-xs text-indigo-400 font-mono">2.0s</span>
+                                </div>
+                                <input type="range" id="speed" name="animation_speed" min="0.5" max="10" step="0.1" value="2.0" class="w-full h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold uppercase tracking-widest text-gray-400">Shadow Color</label>
+                                <input type="color" id="shadowColor" name="shadow_color" value="#ffffff" class="w-full h-10 bg-transparent border-none cursor-pointer p-0">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-col space-y-3">
+                    {{ form.submit(class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-indigo-500/20 cursor-pointer") }}
+                    <button type="button" id="copyBtn" class="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl transition-all">
+                        Copy CSS Code
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Live Preview & Gallery: independently scrollable -->
+    <div class="lg:col-span-2 overflow-y-auto space-y-8" style="scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.4) transparent;">
+        <!-- Live Preview -->
+        <div class="glass-card p-12 rounded-3xl min-h-[400px] flex items-center justify-center relative overflow-hidden">
+            <div id="previewContainer" class="absolute inset-0 bg-[#000] opacity-50 z-0"></div>
+            <div id="previewText" class="relative z-10 text-center transition-all" style="font-size: 40px; font-weight: 700;">
+                RGB STUDIO
+            </div>
+            <div class="absolute bottom-6 left-8 text-gray-600 text-[10px] uppercase tracking-[0.2em] font-bold">Real-time Visualization Engine</div>
+        </div>
+
+        <!-- History Gallery -->
+        <div class="glass-card p-8 rounded-3xl">
+            <h2 class="text-2xl font-bold mb-8 flex items-center">
+                <span class="w-2 h-8 bg-purple-500 rounded-full mr-3"></span>
+                MY GALLERY
+            </h2>
+            {% if user_styles %}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for style in user_styles %}
+                        <div class="p-6 bg-white/5 border border-white/5 rounded-2xl relative group hover:border-indigo-500/30 transition-all flex flex-col justify-between">
+                            <div class="mb-4 flex items-center justify-center h-24 bg-black/40 rounded-xl overflow-hidden">
+                                <p class="text-center truncate w-full" style="
+                                    font-size: 20px; 
+                                    font-weight: {{ style.font_weight }};
+                                    letter-spacing: {{ style.letter_spacing }}px;
+                                    background: linear-gradient(to right, {{ style.color_1 }}, {{ style.color_2 }}, {{ style.color_3 }});
+                                    background-size: 200% 200%;
+                                    -webkit-background-clip: text;
+                                    -webkit-text-fill-color: transparent;
+                                    background-clip: text;
+                                    animation: gradient-flow {{ style.animation_speed }}s ease infinite;
+                                    filter: drop-shadow(0 0 {{ style.glow_intensity }}px {{ style.shadow_color }});
+                                ">
+                                    {{ style.text_content }}
+                                </p>
+                            </div>
+                            <div class="flex justify-between items-center mt-4">
+                                <span class="text-[10px] text-gray-500 uppercase font-bold">{{ style.created_at.strftime('%Y-%m-%d') }}</span>
+                                <form action="{{ url_for('delete_style', style_id=style.id) }}" method="POST">
+                                    <button type="submit" class="text-red-500/60 hover:text-red-500 transition-all text-xs font-bold uppercase tracking-widest">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="py-12 text-center">
+                    <p class="text-gray-500">No saved styles yet. Create your first one!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes gradient-flow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+</style>
+
+<script>
+    const inputs = {
+        text: document.getElementById('textInput'),
+        fontSize: document.getElementById('fontSize'),
+        fontWeight: document.getElementById('fontWeight'),
+        letterSpacing: document.getElementById('letterSpacing'),
+        color1: document.getElementById('color1'),
+        color2: document.getElementById('color2'),
+        color3: document.getElementById('color3'),
+        glow: document.getElementById('glow'),
+        speed: document.getElementById('speed'),
+        shadowColor: document.getElementById('shadowColor')
+    };
+
+    const displays = {
+        text: document.getElementById('previewText'),
+        fontSize: document.getElementById('fontSizeVal'),
+        fontWeight: document.getElementById('fontWeightVal'),
+        letterSpacing: document.getElementById('letterSpacingVal'),
+        glow: document.getElementById('glowVal'),
+        speed: document.getElementById('speedVal')
+    };
+
+    const copyBtn = document.getElementById('copyBtn');
+
+    function updatePreview() {
+        const val = {
+            text: inputs.text.value || 'RGB STUDIO',
+            fontSize: inputs.fontSize.value,
+            fontWeight: inputs.fontWeight.value,
+            letterSpacing: inputs.letterSpacing.value,
+            color1: inputs.color1.value,
+            color2: inputs.color2.value,
+            color3: inputs.color3.value,
+            glow: inputs.glow.value,
+            speed: inputs.speed.value,
+            shadowColor: inputs.shadowColor.value
+        };
+
+        // Apply to Preview
+        displays.text.innerText = val.text;
+        displays.text.style.fontSize = val.fontSize + 'px';
+        displays.text.style.fontWeight = val.fontWeight;
+        displays.text.style.letterSpacing = val.letterSpacing + 'px';
+        
+        // Gradient logic
+        displays.text.style.background = `linear-gradient(to right, ${val.color1}, ${val.color2}, ${val.color3})`;
+        displays.text.style.backgroundSize = '200% 200%';
+        displays.text.style.webkitBackgroundClip = 'text';
+        displays.text.style.backgroundClip = 'text';
+        displays.text.style.webkitTextFillColor = 'transparent';
+        
+        displays.text.style.animation = `gradient-flow ${val.speed}s ease infinite`;
+        displays.text.style.filter = `drop-shadow(0 0 ${val.glow}px ${val.shadowColor})`;
+
+        // Update Labels
+        displays.fontSize.innerText = val.fontSize + 'px';
+        displays.fontWeight.innerText = val.fontWeight;
+        displays.letterSpacing.innerText = val.letterSpacing + 'px';
+        displays.glow.innerText = val.glow + 'px';
+        displays.speed.innerText = val.speed + 's';
+    }
+
+    Object.values(inputs).forEach(input => input.addEventListener('input', updatePreview));
+
+    copyBtn.addEventListener('click', () => {
+        const v = {
+            fontSize: inputs.fontSize.value,
+            fontWeight: inputs.fontWeight.value,
+            letterSpacing: inputs.letterSpacing.value,
+            color1: inputs.color1.value,
+            color2: inputs.color2.value,
+            color3: inputs.color3.value,
+            glow: inputs.glow.value,
+            speed: inputs.speed.value,
+            shadowColor: inputs.shadowColor.value
+        };
+
+        const css = `.luxury-text {
+    font-size: ${v.fontSize}px;
+    font-weight: ${v.fontWeight};
+    letter-spacing: ${v.letterSpacing}px;
+    background: linear-gradient(to right, ${v.color1}, ${v.color2}, ${v.color3});
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-flow ${v.speed}s ease infinite;
+    filter: drop-shadow(0 0 ${v.glow}px ${v.shadowColor});
+}
+
+@keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}`;
+        navigator.clipboard.writeText(css).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = 'COPIED!';
+            copyBtn.classList.add('bg-green-600/20', 'text-green-400');
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.classList.remove('bg-green-600/20', 'text-green-400');
+            }, 2000);
+        });
+    });
+
+    // Initial call
+    updatePreview();
+</script>
+{% endblock %}
