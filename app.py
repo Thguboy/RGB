@@ -1,3 +1,6 @@
+import os
+import sqlite3
+
 from flask import Flask, url_for, flash, redirect, request, render_template, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -10,6 +13,31 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
 
+
+def run_migrations(app):
+    """Automatically add any missing columns to the database without data loss."""
+    db_path = os.path.join(app.instance_path, 'site.db')
+    if not os.path.exists(db_path):
+        return  # db.create_all() will handle it
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("PRAGMA table_info(rgb_text)")
+    existing_cols = {row[1] for row in cursor.fetchall()}
+    new_cols = {
+        'color_1': "TEXT DEFAULT '#ff0000'",
+        'color_2': "TEXT DEFAULT '#00ff00'",
+        'color_3': "TEXT DEFAULT '#0000ff'",
+        'font_weight': "INTEGER DEFAULT 700",
+        'letter_spacing': "INTEGER DEFAULT 0",
+        'shadow_color': "TEXT DEFAULT '#ffffff'",
+    }
+    for col, col_def in new_cols.items():
+        if col not in existing_cols:
+            cursor.execute(f"ALTER TABLE rgb_text ADD COLUMN {col} {col_def}")
+    conn.commit()
+    conn.close()
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
@@ -18,36 +46,13 @@ def create_app():
     bcrypt.init_app(app)
     login_manager.init_app(app)
 
-    def run_migrations(app):
-        """Automatically add any missing columns to the database without data loss."""
-        import sqlite3, os
-        db_path = os.path.join(app.instance_path, 'site.db')
-        if not os.path.exists(db_path):
-            return  # db.create_all() will handle it
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-        cursor.execute("PRAGMA table_info(rgb_text)")
-        existing_cols = {row[1] for row in cursor.fetchall()}
-        new_cols = {
-            'color_1': "TEXT DEFAULT '#ff0000'",
-            'color_2': "TEXT DEFAULT '#00ff00'",
-            'color_3': "TEXT DEFAULT '#0000ff'",
-            'font_weight': "INTEGER DEFAULT 700",
-            'letter_spacing': "INTEGER DEFAULT 0",
-            'shadow_color': "TEXT DEFAULT '#ffffff'",
-        }
-        for col, col_def in new_cols.items():
-            if col not in existing_cols:
-                cursor.execute(f"ALTER TABLE rgb_text ADD COLUMN {col} {col_def}")
-        conn.commit()
-        conn.close()
-
-
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        # db.session.get() — SQLAlchemy 2.x recommended replacement for Query.get()
+        return db.session.get(User, int(user_id))
 
-    # Routes
+    # ── Routes ──────────────────────────────────────────────────────────────
+
     @app.route("/")
     def index():
         return render_template('index.html')
@@ -59,7 +64,11 @@ def create_app():
         form = RegistrationForm()
         if form.validate_on_submit():
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-            user = User(username=form.username.data, email=form.email.data, password_hash=hashed_password)
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                password_hash=hashed_password
+            )
             db.session.add(user)
             db.session.commit()
             flash('Your account has been created! You are now able to log in', 'success')
@@ -77,8 +86,7 @@ def create_app():
                 login_user(user, remember=form.remember.data)
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(url_for('dashboard'))
-            else:
-                flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Login Unsuccessful. Please check email and password', 'danger')
         return render_template('login.html', title='Login', form=form)
 
     @app.route("/logout")
@@ -102,26 +110,34 @@ def create_app():
                 font_weight=form.font_weight.data,
                 letter_spacing=form.letter_spacing.data,
                 shadow_color=form.shadow_color.data,
-                author=current_user
+                user_id=current_user.id
             )
             db.session.add(rgb_text)
             db.session.commit()
             flash('Your RGB style has been saved!', 'success')
             return redirect(url_for('dashboard'))
-        
-        user_styles = RGBText.query.filter_by(author=current_user).order_by(RGBText.created_at.desc()).all()
+
+        user_styles = (
+            RGBText.query
+            .filter_by(user_id=current_user.id)
+            .order_by(RGBText.created_at.desc())
+            .all()
+        )
         return render_template('dashboard.html', title='Dashboard', form=form, user_styles=user_styles)
 
     @app.route("/style/delete/<int:style_id>", methods=['POST'])
     @login_required
     def delete_style(style_id):
-        style = RGBText.query.get_or_404(style_id)
-        if style.author != current_user:
+        # db.get_or_404() — SQLAlchemy 2.x recommended replacement for Query.get_or_404()
+        style = db.get_or_404(RGBText, style_id)
+        if style.user_id != current_user.id:
             return jsonify({'error': 'Unauthorized'}), 403
         db.session.delete(style)
         db.session.commit()
         flash('Style deleted.', 'success')
         return redirect(url_for('dashboard'))
+
+    # ── DB setup ─────────────────────────────────────────────────────────────
 
     with app.app_context():
         db.create_all()
@@ -129,7 +145,13 @@ def create_app():
 
     return app
 
+
 app = create_app()
 
+# WSGI entry point for PythonAnywhere
+application = app
+
 if __name__ == '__main__':
+    # NOTE: debug=True is for local development only.
+    # PythonAnywhere uses a WSGI server — app.run() is never called in production.
     app.run(debug=True)
