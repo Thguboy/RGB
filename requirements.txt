@@ -9,4 +9,4 @@ Werkzeug
 SQLAlchemy
 python-dotenv
 gunicorn
-
+email-validator.post1
