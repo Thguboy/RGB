@@ -5,8 +5,3 @@ Flask-Bcrypt
 Flask-WTF
 WTForms
 email-validator
-Werkzeug
-SQLAlchemy
-python-dotenv
-gunicorn
-
