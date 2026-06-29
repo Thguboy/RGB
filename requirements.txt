@@ -4,9 +4,9 @@ Flask-Login
 Flask-Bcrypt
 Flask-WTF
 WTForms
-email-validator.post1
+email-validator
 Werkzeug
 SQLAlchemy
 python-dotenv
 gunicorn
-email-validator.post1
+
